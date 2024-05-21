@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>你画我猜画板</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f9;
+            font-family: Arial, sans-serif;
+        }
+
+        canvas {
+            border: 2px solid #333;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            cursor: crosshair;
+            background-color: #fff;
+        }
+
+        .controls {
+            margin-bottom: 20px;
+        }
+
+        .controls button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+
+        .controls button:hover {
+            background-color: #0056b3;
+        }
+
+        .controls button.active {
+            background-color: #28a745;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="controls">
+        <button id="drawButton" class="active">Draw</button>
+        <button id="eraseButton">Erase</button>
+        <button id="clearButton">Clear</button>
+    </div>
+    <canvas id="drawingCanvas" width="800" height="600"></canvas>
+
+    <script type="text/javascript">
+        var canvas = document.getElementById('drawingCanvas');
+        var ctx = canvas.getContext('2d');
+        var drawing = false;
+        var erasing = false;
+
+        function startDrawing(e) {
+            drawing = true;
+            ctx.beginPath();
+            ctx.moveTo(e.offsetX, e.offsetY);
+        }
+
+        function draw(e) {
+            if (!drawing) return;
+            if (erasing) {
+                ctx.strokeStyle = '#FFFFFF';
+                ctx.lineWidth = 10; // 可以调整橡皮擦的大小
+            } else {
+                ctx.strokeStyle = '#000000';
+                ctx.lineWidth = 2; // 可以调整绘图线条的粗细
+            }
+            ctx.lineTo(e.offsetX, e.offsetY);
+            ctx.stroke();
+        }
+
+        function stopDrawing() {
+            drawing = false;
+        }
+
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseleave', stopDrawing);
+
+        document.getElementById('drawButton').addEventListener('click', function() {
+            erasing = false;
+            canvas.style.cursor = 'crosshair';
+            this.classList.add('active');
+            document.getElementById('eraseButton').classList.remove('active');
+        });
+
+        document.getElementById('eraseButton').addEventListener('click', function() {
+            erasing = true;
+            canvas.style.cursor = 'not-allowed';
+            this.classList.add('active');
+            document.getElementById('drawButton').classList.remove('active');
+        });
+
+        document.getElementById('clearButton').addEventListener('click', function() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        });
+    </script>
+</body>
+
+</html>
